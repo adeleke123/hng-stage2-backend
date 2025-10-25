@@ -1,8 +1,3 @@
-That's smart\! Copying the raw markdown will save you a lot of time and potential formatting errors.
-
-Here is the complete, raw markdown content for your `README.md`.
-
-
 # 🌍 Country Currency & Exchange API
 
 This is a backend RESTful API built for the Stage 2 Bootcamp task. It integrates data from two external sources (`restcountries.com` and `open.er-api.com`), processes the data (calculates Estimated GDP), and caches the results in a **MySQL** database to provide fast, sortable, and filterable endpoints.
