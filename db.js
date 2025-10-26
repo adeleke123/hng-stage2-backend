@@ -3,17 +3,29 @@
 require('dotenv').config();
 const mysql = require('mysql2/promise');
 
+// --- Configuration Setup ---
+// 
+// Check for the comprehensive URL first (used in Railway deployment as ${{MYSQL_PUBLIC_URL}})
+// This is the most reliable way to connect to a cloud database.
+//
+const connectionConfig = process.env.DATABASE_URL
+    ? { uri: process.env.DATABASE_URL } // Use the full URL string
+    : {
+        host: process.env.DB_HOST,
+        user: process.env.DB_USER,
+        password: process.env.DB_PASSWORD,
+        database: process.env.DB_NAME,
+        // Assuming default port 3306 if not using URL
+    };
+
 const pool = mysql.createPool({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
+    ...connectionConfig, // Spreads the properties from either the URL or individual vars
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
 });
 
-// SQL to create the countries table
+// --- SQL to create the countries table ---
 const CREATE_COUNTRIES_TABLE = `
 CREATE TABLE IF NOT EXISTS countries (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -29,7 +41,7 @@ CREATE TABLE IF NOT EXISTS countries (
 );
 `;
 
-// SQL to create the status table for global tracking
+// --- SQL to create the status table for global tracking ---
 const CREATE_STATUS_TABLE = `
 CREATE TABLE IF NOT EXISTS status (
     id INT PRIMARY KEY,
@@ -38,6 +50,7 @@ CREATE TABLE IF NOT EXISTS status (
 );
 `;
 
+// --- Database Initialization Function ---
 const initializeDatabase = async () => {
     try {
         await pool.query(CREATE_COUNTRIES_TABLE);
